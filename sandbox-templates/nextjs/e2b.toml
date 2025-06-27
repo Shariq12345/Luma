@@ -1,0 +1,17 @@
+# This is a config for E2B sandbox template.
+# You can use template ID (th2bzcr9dgbwgbacgki0) or template name (luma-nextjs-test-2) to create a sandbox:
+
+# Python SDK
+# from e2b import Sandbox, AsyncSandbox
+# sandbox = Sandbox("luma-nextjs-test-2") # Sync sandbox
+# sandbox = await AsyncSandbox.create("luma-nextjs-test-2") # Async sandbox
+
+# JS SDK
+# import { Sandbox } from 'e2b'
+# const sandbox = await Sandbox.create('luma-nextjs-test-2')
+
+team_id = "dc48d477-1fcc-42f7-ad4b-750bfecca5c0"
+start_cmd = "/compile_page.sh"
+dockerfile = "e2b.Dockerfile"
+template_name = "luma-nextjs-test-2"
+template_id = "th2bzcr9dgbwgbacgki0"
