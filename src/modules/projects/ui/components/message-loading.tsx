@@ -3,15 +3,15 @@ import Image from "next/image";
 
 const ShimmerMessages = () => {
   const messages = [
-    "Understanding your project goals",
-    "Analyzing user intent and branding",
-    "Mapping out site structure and pages",
-    "Designing responsive layout components",
-    "Generating smart copy and content blocks",
-    "Optimizing for SEO and performance",
-    "Applying visual design principles",
-    "Reviewing and refining your website",
-    "Preparing your intelligent website preview",
+    "Understanding your project goals...",
+    "Analyzing user intent and branding...",
+    "Mapping out site structure and pages...",
+    "Designing responsive layout components...",
+    "Generating smart copy and content blocks...",
+    "Optimizing for SEO and performance...",
+    "Applying visual design principles...",
+    "Reviewing and refining your website...",
+    "Preparing your intelligent website preview...",
   ];
 
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);

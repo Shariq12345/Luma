@@ -52,7 +52,6 @@ export const MessageForm = ({ projectId }: MessageFormProps) => {
       },
       // Invalidate usage status
       onError: (error) => {
-        // TODO: Redirect to pricing page if user is not subscribed
         toast.error(error.message);
       },
     })
