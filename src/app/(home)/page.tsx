@@ -5,22 +5,21 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="flex flex-col max-w-5xl mx-auto w-full">
-      <section className="space-y-6 py-[16vh] 2xl:py-48">
+      <section className="space-y-6 py-[10vh] 2xl:py-30">
         <div className="flex flex-col items-center">
-          <Image
+          {/* <Image
             src="/logo.svg"
             alt="Logo"
             width={50}
             height={50}
             className="hidden md:block"
-          />
+          /> */}
         </div>
         <h1 className="text-2xl md:text-5xl font-bold text-center">
           Build something amazing
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground text-center">
-          Create websites and applications with ease using Luma, a powerful AI
-          Agentic Website Builder.
+        <p className="text-lg md:text-xl opacity-70 text-center">
+          From Idea to Website, Luma&apos;s AI Agents Do the Work.
         </p>
         <div className="max-w-3xl mx-auto w-full">
           <ProjectForm />
