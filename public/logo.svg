@@ -1,13 +1,1 @@
-<svg fill="none" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="gradient3" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#2196F3"/> <!-- Blue -->
-      <stop offset="100%" stop-color="#00E5FF"/> <!-- Cyan -->
-    </linearGradient>
-  </defs>
-  <rect width="48" height="48" rx="12" fill="#0A0D12"/>
-  <path 
-    d="M24 9l3.2145 7.2394 7.3921-2.846-2.846 7.3921 7.2394 3.2145-7.2394 3.2145 2.846 7.3921-7.3921-2.846-3.2145 7.2394-3.2145-7.2394-7.3921 2.846 2.846-7.3921-7.2394-3.2145 7.2394-3.2145-2.846-7.3921 7.3921 2.846z" 
-    fill="url(#gradient3)"
-  />
-</svg>
+<svg fill="none" height="48" viewBox="0 0 32 48" width="32" xmlns="http://www.w3.org/2000/svg"><g fill="#eaaa08"><path d="m21.3314 18.6667v-10.6667h-21.33335312v10.6667z"/><path d="m21.3309 29.3332c-5.891 0-10.6666 4.7757-10.6666 10.6667l-10.66494994.0004v-.2753c.14659294-11.6097 9.56705994-20.9847 21.19434994-21.058l10.8043.0005v21.3333h-10.6666z"/></g></svg>
