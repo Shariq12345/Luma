@@ -10,7 +10,7 @@ import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 
 export const ProjectsList = () => {
-  const { isSignedIn } = useUser();
+  const { user, isSignedIn } = useUser();
   const trpc = useTRPC();
 
   // Always call the hook, but only enable it if signed in
@@ -48,7 +48,9 @@ export const ProjectsList = () => {
 
   return (
     <div className="w-full bg-white dark:bg-sidebar rounded-xl p-8 border flex flex-col gap-y-6 sm:gap-y-4">
-      <h2 className="text-2xl font-semibold">Saved Lumens</h2>
+      <h2 className="text-2xl font-semibold">
+        {user?.firstName || "Your"}&apos;s Lumens
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {projects?.length === 0 && (
           <div className="col-span-full text-center">
