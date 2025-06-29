@@ -18,12 +18,21 @@ import Link from "next/link";
 import { CodeView } from "@/components/code-view/code-view";
 import { FileExplorer } from "@/components/file-explorer";
 import { UserControls } from "@/components/user-controls";
+import { useAuth } from "@clerk/nextjs";
 
 interface Props {
   projectId: string;
 }
 
 export const ProjectView = ({ projectId }: Props) => {
+  const { has } = useAuth();
+
+  const isGlow = has?.({ plan: "glow_user" });
+  const isShine = has?.({ plan: "shine_user" });
+  const isRadiate = has?.({ plan: "radiate_user" });
+
+  const isPaidPlan = isShine || isRadiate;
+
   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
   const [tabState, setTabState] = useState<"preview" | "code">("preview");
 
@@ -65,11 +74,13 @@ export const ProjectView = ({ projectId }: Props) => {
                 </TabsTrigger>
               </TabsList>
               <div className="ml-auto flex items-center gap-x-2">
-                <Button asChild size="sm" variant={"tertiary"}>
-                  <Link href="/pricing">
-                    <CrownIcon /> Upgrade
-                  </Link>
-                </Button>
+                {!isPaidPlan && (
+                  <Button asChild size="sm" variant={"tertiary"}>
+                    <Link href="/pricing">
+                      <CrownIcon /> Upgrade
+                    </Link>
+                  </Button>
+                )}
                 <UserControls />
               </div>
             </div>
