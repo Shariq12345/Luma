@@ -5,11 +5,13 @@ import {
   createTool,
   createNetwork,
   type Tool,
+  Message,
+  createState,
 } from "@inngest/agent-kit";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTestMessageContent } from "./utils";
 import { z } from "zod";
-import { PROMPT } from "@/prompt";
+import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@/prompt";
 import { prisma } from "@/lib/database";
 
 interface AgentState {
@@ -26,6 +28,43 @@ export const codeAgentFunction = inngest.createFunction(
 
       return sandbox.sandboxId;
     });
+
+    const previousMessages = await step.run(
+      "get-previous-messages",
+      async () => {
+        const formattedMessages: Message[] = [];
+
+        const messages = await prisma.message.findMany({
+          where: {
+            projectId: event.data.projectId,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        for (const message of messages) {
+          formattedMessages.push({
+            type: "text",
+            role: message.role === "ASSISTANT" ? "assistant" : "user",
+            content: message.content,
+          });
+        }
+
+        return formattedMessages;
+      }
+    );
+
+    const state = createState<AgentState>(
+      {
+        summary: "",
+        files: {},
+      },
+      {
+        messages: previousMessages,
+      }
+    );
+
     const codeAgent = createAgent<AgentState>({
       name: "code-agent",
       description: "An expert coding agent.",
@@ -152,52 +191,98 @@ export const codeAgentFunction = inngest.createFunction(
     const network = createNetwork<AgentState>({
       name: "coding-agent-network",
       agents: [codeAgent],
-      maxIter: 5, // Maximum number of iterations to stop the agent from running indefinitely and consuming credits
+      maxIter: 5,
+      defaultState: state,
       router: async ({ network }) => {
         const summary = network.state.data.summary;
-
-        if (summary) {
-          return;
-        }
-
+        if (summary) return;
         return codeAgent;
       },
     });
 
-    const result = await network.run(event.data.value);
+    const result = await network.run(event.data.value, { state });
 
+    // Create fragment title and response agents
+    const fragmentTitleGenerator = createAgent({
+      name: "fragment-title-generator",
+      description: "Generates a title for the code fragment.",
+      system: FRAGMENT_TITLE_PROMPT,
+      model: openai({ model: "gpt-4o" }),
+    });
+
+    const responseGenerator = createAgent({
+      name: "response-generator",
+      description: "Generates a response for the user.",
+      system: RESPONSE_PROMPT,
+      model: openai({ model: "gpt-4o" }),
+    });
+
+    // Run agents
+    const { output: fragmentTitleOutput } = await fragmentTitleGenerator.run(
+      result.state.data.summary
+    );
+    const { output: responseOutput } = await responseGenerator.run(
+      result.state.data.summary
+    );
+
+    // Reusable helper to extract text from agent output
+    function extractTextFromAgentOutput(
+      output: any[] | undefined,
+      fallback: string
+    ): string {
+      if (!output || output.length === 0 || output[0].type !== "text") {
+        return fallback;
+      }
+
+      const content = output[0].content;
+      return Array.isArray(content) ? content.join("") : content;
+    }
+
+    // Use the helper to extract values
+    const fragmentTitle = extractTextFromAgentOutput(
+      fragmentTitleOutput,
+      "Fragment"
+    );
+    const userResponse = extractTextFromAgentOutput(
+      responseOutput,
+      "Here you go!"
+    );
+
+    // Check if agent execution failed
     const isError =
       !result.state.data.summary ||
       Object.keys(result.state.data.files || {}).length === 0;
 
+    // Generate sandbox URL
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
       const sandbox = await getSandbox(sandboxId);
       const host = sandbox.getHost(3000);
-
       return `https://${host}`;
     });
 
+    // Save message to DB
     await step.run("save-result", async () => {
       if (isError) {
         return await prisma.message.create({
           data: {
             projectId: event.data.projectId,
-            content: "Soething went wrong. Please try again.",
+            content: "Something went wrong. Please try again.",
             role: "ASSISTANT",
             type: "ERROR",
           },
         });
       }
+
       return await prisma.message.create({
         data: {
           projectId: event.data.projectId,
-          content: result.state.data.summary,
+          content: userResponse,
           role: "ASSISTANT",
           type: "RESULT",
           fragment: {
             create: {
-              sandboxUrl: sandboxUrl,
-              title: "Fragment",
+              sandboxUrl,
+              title: fragmentTitle,
               files: result.state.data.files,
             },
           },
