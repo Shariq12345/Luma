@@ -25,7 +25,7 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("luma-nextjs-test-2");
-
+      // await sandbox.setTimeout(60_000 * 10 * 3)
       return sandbox.sandboxId;
     });
 
@@ -41,6 +41,7 @@ export const codeAgentFunction = inngest.createFunction(
           orderBy: {
             createdAt: "desc",
           },
+          take: 5,
         });
 
         for (const message of messages) {
@@ -51,7 +52,7 @@ export const codeAgentFunction = inngest.createFunction(
           });
         }
 
-        return formattedMessages;
+        return formattedMessages.reverse();
       }
     );
 
@@ -207,14 +208,14 @@ export const codeAgentFunction = inngest.createFunction(
       name: "fragment-title-generator",
       description: "Generates a title for the code fragment.",
       system: FRAGMENT_TITLE_PROMPT,
-      model: openai({ model: "gpt-4o" }),
+      model: openai({ model: "gpt-4o-mini" }),
     });
 
     const responseGenerator = createAgent({
       name: "response-generator",
       description: "Generates a response for the user.",
       system: RESPONSE_PROMPT,
-      model: openai({ model: "gpt-4o" }),
+      model: openai({ model: "gpt-4o-mini" }),
     });
 
     // Run agents
