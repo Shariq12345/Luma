@@ -15,7 +15,6 @@ import { MessagesContainer } from "../components/messages-container";
 import { CodeIcon, CrownIcon, EyeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CodeView } from "@/components/code-view/code-view";
 import { FileExplorer } from "@/components/file-explorer";
 import { UserControls } from "@/components/user-controls";
 import { useAuth } from "@clerk/nextjs";
@@ -28,7 +27,7 @@ interface Props {
 export const ProjectView = ({ projectId }: Props) => {
   const { has } = useAuth();
 
-  const isGlow = has?.({ plan: "glow_user" });
+  // const isGlow = has?.({ plan: "glow_user" });
   const isShine = has?.({ plan: "shine_user" });
   const isRadiate = has?.({ plan: "radiate_user" });
 

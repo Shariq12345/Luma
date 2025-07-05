@@ -1,6 +1,5 @@
 "use client";
 import { PricingTable } from "@clerk/nextjs";
-import Image from "next/image";
 import { dark } from "@clerk/themes";
 import { useCurrentTheme } from "@/hooks/use-current-theme";
 

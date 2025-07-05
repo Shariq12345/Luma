@@ -228,6 +228,7 @@ export const codeAgentFunction = inngest.createFunction(
 
     // Reusable helper to extract text from agent output
     function extractTextFromAgentOutput(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       output: any[] | undefined,
       fallback: string
     ): string {
